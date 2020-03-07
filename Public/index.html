@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>get EPPO codes</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- import the webpage's stylesheet -->
+   <link rel="stylesheet" href="/myStyleSheet.css">
+    
+    
+  </head>  
+  <body>
+    <div id="startPage">
+      <h1>Find EPPO codes for the list of scientific names</h1>
+      <p>Here you can query botanical names in batches. After first search you will what you would also (and even better) get in EPPO data services page - EPPO codes for botanical names
+        when they were found by exact match. 
+        If there will be any not matching names in your list, in second search this application will try to modify your botanical names and find what they would match.
+      </p>
+      <p>Copy your short list of botanical names here</p>
+
+      <textarea rows = "5" cols = "40"  id = "shortTable" ></textarea>
+      <p>
+  
+        <button type ="button" id = "shortTableInput">Click to submit bot names</button>
+
+      </p>
+      <p>
+        OR input your longer list of botanical names as CSV file here. You can get CSV file from Excel - Save as .csv
+      </p>
+      <p id="fileInputParagr">
+        <input type="file" id="fileInput"/>
+  <!--šeit es varu ielikt accept=".csv", lai ņemtu pretī tikai csv failus-->
+        <button type ="button", id = "fileInputButton">Analyze file</button>
+      </p>
+    </div>
+  <template id = "resulttable1">
+    <table>
+      <thead>
+        <tr>
+          <th>Bot name you sent</th>
+          <th>EPPO code if found</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+    </table>
+  </template>
+
+<!-- import the webpage's javascript file -->
+<script src="/script.js" defer></script>
+</body>
+    <!-- include the Glitch button to show what the webpage is about and
+          to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+
+    
+  </body>
+</html>
