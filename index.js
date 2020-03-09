@@ -74,9 +74,10 @@ const possible3wordsSearch = (database, word, eachWordResultArray, wholeSearchRe
 
             } else {
                 rows.forEach((row) => {
-                    resultObj.eppocode = row.eppocode;
-                    resultObj.searchedName = row.fullname;
-                    eachWordResultArray.push(resultObj); 
+                    let resultObj2 = {};
+                    resultObj2.eppocode = row.eppocode;
+                    resultObj2.searchedName = row.fullname;
+                    eachWordResultArray.push(resultObj2); 
                     if (eachWordResultArray.length === rows.length) {
                         wholeSearchResultArray.push(searchWordObj);
                     } 
