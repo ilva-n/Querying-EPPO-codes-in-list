@@ -3,13 +3,20 @@ String.prototype.capitalize1st = function() {
   return this[0].toUpperCase() + this.substring(1).toLowerCase();
 };
 // to take input of short list copied into text area
+let startTime1;
+let startTime2;
+let endTime1;
+let endTime2;
+
+
 const submitNames = function() {
   const inputNames = document.getElementById("shortTable").value
   if (!inputNames) { 
     alert("box is empty! put bot names there!")
   } 
   else {
-  areaInputNames.bot_names = inputNames.split("\n");
+    startTime1 = Date.now();
+    areaInputNames.bot_names = inputNames.split("\n");
     let paragr = document.createElement("p");
     //paragr.setAttribute("id", "answerWait");
     paragr.textContent = "Wait for a while for answer please";
@@ -49,6 +56,9 @@ const createFirstResultTableAndCSV = (response) => {
   let resultsTable = tableTemplate1.content.cloneNode(true);
   let newDivTable = document.createElement("div");
   newDivTable.setAttribute("id", "mainResults");
+  let time1 = (endTime1 - startTime1)/1000;
+  document.getElementById("resultTablePlace").appendChild(document.createElement("p")).setAttribute("id", "time1line");
+  document.getElementById("time1line").textContent = `Yoo - it took ${time1} seconds`;
   document.getElementById("resultTablePlace").appendChild(newDivTable);
   newDivTable.appendChild(resultsTable);
   let table1Body = newDivTable.querySelector("tbody");
@@ -91,6 +101,7 @@ const fetchAndHandle1stResponse = (options, anouncement) => {
         return response.json();
         }).then((response) => {
           console.log(response);
+          endTime1 = Date.now();
           anouncement.remove();
           document.body.appendChild(document.createElement("p")).setAttribute("id", "resultTablePlace");
           let resultNotFoundCheck = response.filter(botName => botName.eppocode === "not found");
@@ -256,6 +267,7 @@ function handleFiles() {
     if (!selectedFile.files[0]) {
       alert("you have not chosen a file");
     } else {
+        startTime1 = new Date();
         const reader = new FileReader();
           reader.readAsText(selectedFile.files[0]);
           reader.onload = function() {
@@ -296,13 +308,15 @@ let forthResult = [];
 
 const reduceNotFoundNames = function() {
   document.getElementById("startPage").innerHTML = "WAIT!";
+  startTime2 = Date.now();
   let shortenedNamesToCheck = [];
   let toCheckAuthors = [];
   let toCheckInfraspecNames = [];
   let genusSpeciesNames = [];
   document.getElementById("mainResults").style.display = "none";
   document.getElementById("button2").style.display = "none";
-  
+  document.getElementById("button2").style.display = "none";
+  document.getElementById("time1line").style.display = "none";
   for (let i = 0; i < notMatchingBotnames.length; i++) {
     name = notMatchingBotnames[i];
     let splitName = name.split(/\s/);
@@ -366,10 +380,12 @@ const reduceNotFoundNames = function() {
     }).then((response) => {
       
       console.log(response);
-      
+      endTime2 = Date.now();
       document.getElementById("startPage").innerHTML = "";
       let reloadButton = document.createElement("button");
       document.getElementById("startPage").appendChild(reloadButton);
+      let time2 = (endTime2 - startTime2)/1000;
+      document.getElementById("startPage").appendChild(document.createElement("p")).textContent = `It took ${time2} seconds`;
       reloadButton.setAttribute("id", "refresh");
       document.getElementById("refresh").innerHTML = "START AGAIN!";
       reloadButton.addEventListener("click", () => {location.reload();});
