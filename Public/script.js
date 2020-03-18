@@ -104,13 +104,22 @@ const fetchAndHandle1stResponse = (options, anouncement) => {
           endTime1 = Date.now();
           anouncement.remove();
           document.body.appendChild(document.createElement("p")).setAttribute("id", "resultTablePlace");
-          let resultNotFoundCheck = response.filter(botName => botName.eppocode === "not found");
+          if (response.outcome === "fail") { 
+            document.getElementById("startPage").innerHTML = "";
+            document.getElementById("resultTablePlace").textContent = response.result;
+          } else if (response.outcome === "OK") {
+          
+          let resultNotFoundCheck = response.results.filter(botName => botName.eppocode === "not found");
           if (resultNotFoundCheck.length >= 1) {
             createButton2();
           }
           // to show first search results in table on screen
-          createFirstResultTableAndCSV(response);
-        });
+          createFirstResultTableAndCSV(response.results);
+        } else {
+          document.getElementById("startPage").innerHTML = "";
+          document.getElementById("resultTablePlace").textContent = "Something bad happened";
+        }
+        }); 
 };
 
 const showHideTable1 = () => {
@@ -380,6 +389,8 @@ const reduceNotFoundNames = function() {
     }).then((response) => {
       
       console.log(response);
+
+      if (response.outcome === "OK") {
       endTime2 = Date.now();
       document.getElementById("startPage").innerHTML = "";
       let reloadButton = document.createElement("button");
@@ -390,10 +401,10 @@ const reduceNotFoundNames = function() {
       document.getElementById("refresh").innerHTML = "START AGAIN!";
       reloadButton.addEventListener("click", () => {location.reload();});
       
-      if (response.result1) {
-        firstResult = response.result1;
+      if (response.results.result1) {
+        firstResult = response.results.result1;
       let csv1 = "received name,shortened name,found name1,found code1,found name2,found code2,found name3,found code3\n";
-        response.result1.forEach(function(obj) {
+        response.results.result1.forEach(function(obj) {
         if(obj.results.length < 3) {
           for (let i = 0; i < (4 - obj.results.length); i++) {
             obj.results.push({eppocode: "none", searchedName: "none"});
@@ -416,7 +427,7 @@ const reduceNotFoundNames = function() {
       a.textContent = 'Download CSV1';
       a.dataset.downloadurl = [contentType, a.download, a.href].join(':');
       document.body.appendChild(document.createElement("div")).setAttribute("id", "p1");
-      document.getElementById("p1").textContent = `There were ${response.result1.length} bot names consisting of one word which were not found among bot names in EPPO database. See links for suggestions about similar bot names`;
+      document.getElementById("p1").textContent = `There were ${response.results.result1.length} bot names consisting of one word which were not found among bot names in EPPO database. See links for suggestions about similar bot names`;
       let button1rez = document.createElement("button");
       button1rez.setAttribute("id", "button1r");
       button1rez.innerHTML = "Show/hide on screen results of group 1";
@@ -425,10 +436,10 @@ const reduceNotFoundNames = function() {
       document.getElementById("p1").querySelector("p").appendChild(button1rez);
       
       }
-      if (response.result2) {
-        secondResult = response.result2;
+      if (response.results.result2) {
+        secondResult = response.results.result2;
       let csv2 = "received name,comment,found name1,found code1,found name2,found code2,found name3,found code3\n";
-      response.result2.forEach(function(obj) {
+      response.results.result2.forEach(function(obj) {
         if(obj.results.length < 3) {
           for (let i = 0; i < (4 - obj.results.length); i++) {
             obj.results.push({searchedName: "none", eppocode: "none"});
@@ -447,7 +458,7 @@ const reduceNotFoundNames = function() {
       a2.textContent = 'Download CSV2';
       a2.dataset.downloadurl = [contentType, a2.download, a2.href].join(':');
       document.body.appendChild(document.createElement("div")).setAttribute("id", "p2");
-      document.getElementById("p2").textContent = `There were ${response.result2.length} bot names consisting of two words which were not found among bot names in EPPO database. Perhaps 2nd words were authors descriptions. See links for what we suggest as similar names`;
+      document.getElementById("p2").textContent = `There were ${response.results.result2.length} bot names consisting of two words which were not found among bot names in EPPO database. Perhaps 2nd words were authors descriptions. See links for what we suggest as similar names`;
       let button2rez = document.createElement("button");
       button2rez.setAttribute("id", "button2r");
       button2rez.innerHTML = "Show/hide on screen results of group 2";
@@ -455,11 +466,11 @@ const reduceNotFoundNames = function() {
       document.getElementById("p2").appendChild(document.createElement("p")).appendChild(a2);
       document.getElementById("p2").querySelector("p").appendChild(button2rez);
       }
-      if (response.result3) {
-        thirdResult = response.result3;
+      if (response.results.result3) {
+        thirdResult = response.results.result3;
       let csv3 = "received name,searched name for infraspec taxon, code if found\n";
       
-      response.result3.forEach(function(obj) {
+      response.results.result3.forEach(function(obj) {
         obj.nameAsItIs = obj.nameAsItIs.replace(/,/g, ' ');
         obj.nameToCheck = obj.nameToCheck.replace(/,/g, ' ');
         csv3 += `${obj.nameAsItIs},${obj.nameToCheck},${obj.result.code}`;
@@ -472,7 +483,7 @@ const reduceNotFoundNames = function() {
       a3.textContent = 'Download CSV3';
       a3.dataset.downloadurl = [contentType, a3.download, a3.href].join(':');
       document.body.appendChild(document.createElement("div")).setAttribute("id", "p3");
-      document.getElementById("p3").textContent = `There were ${response.result3.length} bot names which seemed to have infraspecific taxon. See links if codes were found for them`;
+      document.getElementById("p3").textContent = `There were ${response.results.result3.length} bot names which seemed to have infraspecific taxon. See links if codes were found for them`;
       let button3rez = document.createElement("button");
       button3rez.setAttribute("id", "button3r");
       button3rez.innerHTML = "Show/hide on screen results of group 3";
@@ -480,10 +491,10 @@ const reduceNotFoundNames = function() {
       document.getElementById("p3").appendChild(document.createElement("p")).appendChild(a3);
       document.getElementById("p3").querySelector("p").appendChild(button3rez);
     }
-    if (response.result4) {
-      forthResult = response.result4;
+    if (response.results.result4) {
+      forthResult = response.results.result4;
       let csv4 = "received name,searched name,code if found,genus name,genus code,genus sp. name,genus sp. code\n";
-      response.result4.forEach(function(obj) {
+      response.results.result4.forEach(function(obj) {
         if(!obj.result.genusName) {
           obj.result.genusName = "not relevant";
           obj.result.genusCode = "not relevant";
@@ -504,13 +515,18 @@ const reduceNotFoundNames = function() {
       a4.textContent = 'Download CSV4';
       a4.dataset.downloadurl = [contentType, a4.download, a4.href].join(':');
       document.body.appendChild(document.createElement("div")).setAttribute("id", "p4");
-      document.getElementById("p4").textContent = `There were ${response.result4.length} bot names consisting of more than two words and were not found among bot names in EPPO database in first search. See links for what we suggest as similar names`;
+      document.getElementById("p4").textContent = `There were ${response.results.result4.length} bot names consisting of more than two words and were not found among bot names in EPPO database in first search. See links for what we suggest as similar names`;
       let button4rez = document.createElement("button");
       button4rez.setAttribute("id", "button4r");
       button4rez.innerHTML = "Show/hide on screen results of group 4";
       button4rez.addEventListener("click", show4rezultsOnscreen, {once: true});
       document.getElementById("p4").appendChild(document.createElement("p")).appendChild(a4);
       document.getElementById("p4").querySelector("p").appendChild(button4rez);
+    }
+    } else if (response.outcome === "fail") {
+      document.getElementById("startPage").textContent = response.result;
+    } else {
+      document.getElementById("startPage").textContent = "Something went wrong";
     }
     });
   

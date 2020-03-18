@@ -1,18 +1,34 @@
 const sqlite3 = require('sqlite3').verbose();
+const EventEmitter = require('events');
 
+
+const emiter = new EventEmitter;
+let errCount = 0;
+        emiter.on('dbErr', () => { 
+            errCount++; 
+        });
 String.prototype.capitalize1st = function() {
     return this[0].toUpperCase() + this.substring(1).toLowerCase();
  };
  //function for bot names first search in sqlite database
- const getExactWords = (database, word, resultArray, incommingNamesArray, response) => {
+ const getExactWords = (database, word, resultArray, incommingNamesArray, response, next) => {
      database.get("SELECT * FROM t_names JOIN t_codes ON t_names.codeid = t_codes.codeid WHERE codelang = 'la' AND fullname = $b_name COLLATE NOCASE",
       {
       $b_name: word
       },
       (err, row) => {
-          if (err) {
-              console.error;
-          }
+        
+        if (err) {
+            emiter.emit('dbErr');
+            console.log("error is emitted");
+            console.log(errCount);
+            if (errCount === incommingNamesArray.length) { 
+                database.close();
+                console.log('database is closed');
+                
+             };
+            return next(err);
+          } 
           const name1 = {};
           name1.incommingName = word;
           if (row === undefined) {
@@ -24,13 +40,15 @@ String.prototype.capitalize1st = function() {
           if (resultArray.length === incommingNamesArray.length) {
              response.results = resultArray;
              database.close();
-             response.send(response.results);
-         };
+
+             response.send({outcome: "OK", results: response.results});
+         }
+         
       });
   };
  
  // function for preparing words for exact names search in database
- const exactNameFind = (request, response) => {
+ const exactNameFind = (request, response, next) => {
      let resultExactNames = [];
      let db = new sqlite3.Database('./eppocodes.sqlite');
      let namesArray = request.body.bot_names;
@@ -38,8 +56,10 @@ String.prototype.capitalize1st = function() {
          let nameEach = namesArray[i];
          nameEach = nameEach.replace(/;|"|'/g, ' '); //removes quotes and semicolons if such come from csv file
          nameEach = nameEach.trim(); //removes extra spaces
-         getExactWords(db, nameEach, resultExactNames, namesArray, response);  
+         getExactWords(db, nameEach, resultExactNames, namesArray, response, next);
+         
      };
+     
  }; 
  
  const shorten1 = function (word) {
@@ -58,6 +78,17 @@ String.prototype.capitalize1st = function() {
             $b_name: word
         }, 
         (err, rows) => {
+            if (err) {
+                emiter.emit('dbErr');
+                console.log("error is emitted");
+                console.log(errCount);
+                if (errCount === wholeSearchResultArray.length) { 
+                    database.close();
+                    console.log('database is closed');
+                    
+                };
+            return next(err);
+            }
              let resultObj = {};
              if (rows.length === 0) {
                  resultObj.eppocode = "not found";
@@ -128,17 +159,28 @@ String.prototype.capitalize1st = function() {
          word = shorten1(word);
      };
      word = word + "%";
-     database.get('SELECT * FROM t_authorities JOIN t_codes ON t_names.codeid = t_codes.codeid WHERE authdesc LIKE $author',
+     database.get('SELECT * FROM t_authorities WHERE authdesc LIKE $author',
          {
              $author: word
          },
          (err, row) => {
+             if (err) {
+                emiter.emit('dbErr');
+                console.log("error is emitted");
+                console.log(errCount);
+                if (errCount === incommingObjectsArray.length) { 
+                    database.close();
+                    console.log('database is closed');
+                    
+                };
+                return next(err);
+             }
              incommingObject.results = [];
              // if word is not found with LIKE among authors AND does not contain capital letters or dot, it is considered not to be authors descriotion
              if (row === undefined && /[A-Z(.)]/.test(word) === false) {
                  incommingObject.word2 = "2nd word not found as author";
                  resultArray.push(incommingObject);
-                 console.log(resultArray.length);
+                 //console.log(resultArray.length);
                  if (resultArray.length === incommingObjectsArray.length) {
                      response.results.result2 = resultArray;
                      database.close();
@@ -152,6 +194,17 @@ String.prototype.capitalize1st = function() {
                          $b_name: incommingObject.word1
                      },
                      (err, row) => {
+                         if (err) {
+                            emiter.emit('dbErr');
+                            console.log("error is emitted");
+                            console.log(errCount);
+                            if (errCount === incommingObjectsArray.length) { 
+                                database.close();
+                                console.log('database is closed');
+                                
+                            };
+                            return next(err);
+                         }
                          if(row === undefined) {
                              incommingObject.word1 = "genus name not found";
                              incommingObject.results[0] = {};
@@ -171,8 +224,18 @@ String.prototype.capitalize1st = function() {
                              database.get("SELECT * FROM t_names JOIN t_codes ON t_names.codeid = t_codes.codeid WHERE codelang = 'la' AND fullname = $b_name", 
                                  {
                                      $b_name: genusSp
-                                 }, (err, row)=>{
-                                     if(row === undefined) {
+                                 }, (err, row) => {
+                                     if (err) {
+                                        emiter.emit('dbErr');
+                                        console.log("error is emitted");
+                                        console.log(errCount);
+                                        if (errCount === incommingObjectsArray.length) { 
+                                        database.close();
+                                        console.log('database is closed');              
+                                        };
+                                        return next(err);
+                                     }
+                                     if (row === undefined) {
                                          incommingObject.results[1] = {};
                                          incommingObject.results[1].searchedName = "not found";
                                          incommingObject.results[1].eppocode = "not found";
@@ -226,8 +289,16 @@ String.prototype.capitalize1st = function() {
       },
       (err, row) => {
           if (err) {
-              console.error;
-          }
+            emiter.emit('dbErr');
+            console.log("error is emitted");
+            console.log(errCount);
+            if (errCount === incommingObjectsArray.length) { 
+                database.close();
+                console.log('database is closed');
+                
+            };
+            return next(err);
+          } 
           incommingObject.result = {};
           
           if (row === undefined) {
@@ -317,6 +388,17 @@ String.prototype.capitalize1st = function() {
                          $b_name: eachWord
                      },
                      (err, row) => {
+                         if (err) {
+                            emiter.emit('dbErr');
+                            console.log("error is emitted");
+                            console.log(errCount);
+                            if (errCount === incommingObjects.length) { 
+                                db.close();
+                                console.log('database is closed');
+                                
+                            };
+                            return next(err);
+                         } 
                          if(row === undefined) {
                              incommingObjects[i].result.name = incommingObjects[i].words12;
                              incommingObjects[i].result.genusName = eachWord;
@@ -339,6 +421,17 @@ String.prototype.capitalize1st = function() {
                                  {
                                      $b_name: genusSp
                                  }, (err, row) => {
+                                     if (err) {
+                                        emiter.emit('dbErr');
+                                        console.log("error is emitted");
+                                        console.log(errCount);
+                                        if (errCount === incommingObjects.length) { 
+                                            db.close();
+                                            console.log('database is closed');
+                                            
+                                        };
+                                        return next(err);
+                                     } 
                                      if(row === undefined) {
                                          incommingObjects[i].result.name = incommingObjects[i].words12;
                                          incommingObjects[i].result.genusName = eachWord;
@@ -380,5 +473,6 @@ String.prototype.capitalize1st = function() {
     infraSpecNameCheck: infraSpecNameCheck,
     genusSpeciesNameSearch: genusSpeciesNameSearch,
     genusSpeciesNotFound: genusSpeciesNotFound,
-    exactNameFind: exactNameFind
+    exactNameFind: exactNameFind,
+    
  };
