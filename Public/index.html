@@ -14,11 +14,11 @@
   <body>
     <div id="startPage">
       <h1>Find EPPO codes for the list of scientific names</h1>
-      <p>Here you can query botanical names in batches. After first search you will what you would also (and even better) get in EPPO data services page - EPPO codes for botanical names
+      <p>Here you can query botanical names in batches. After first search you will get what you would also (and even better) get in EPPO data services page - EPPO codes for botanical names
         when they were found by exact match. 
         If there will be any not matching names in your list, in second search this application will try to modify your botanical names and find what they would match.
       </p>
-      <p>Copy your short list of botanical names here</p>
+      <p><span class="bold">Copy your short list of botanical names here</span></p>
 
       <textarea rows = "5" cols = "40"  id = "shortTable" ></textarea>
       <p>
@@ -27,7 +27,7 @@
 
       </p>
       <p>
-        OR input your longer list of botanical names as CSV file here. You can get CSV file from Excel - Save as .csv
+        <span class="bold">OR input your longer list of botanical names as CSV file here</span>. And press "Analyze file". You can get CSV file from Excel – make Excel table (one name per line) and save as .csv
       </p>
       <p id="fileInputParagr">
         <input type="file" id="fileInput"/>
@@ -52,11 +52,5 @@
 <!-- import the webpage's javascript file -->
 <script src="/script.js" defer></script>
 </body>
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js"></script>
-
-    
-  </body>
+  
 </html>

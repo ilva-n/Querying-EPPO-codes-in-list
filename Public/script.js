@@ -17,8 +17,8 @@
       startTime1 = Date.now();
       areaInputNames.bot_names = inputNames.split("\n");
       let paragr = document.createElement("p");
-      //paragr.setAttribute("id", "answerWait");
-      paragr.textContent = "Wait for a while for answer please";
+      paragr.setAttribute("id", "answerWait");
+      paragr.textContent = "Wait for results please!";
       document.body.appendChild(paragr);
       areaInputNames.bot_names = areaInputNames.bot_names.filter(Boolean);
 
@@ -57,7 +57,7 @@
     newDivTable.setAttribute("id", "mainResults");
     let time1 = (endTime1 - startTime1)/1000;
     document.getElementById("resultTablePlace").appendChild(document.createElement("p")).setAttribute("id", "time1line");
-    document.getElementById("time1line").textContent = `Yoo - it took ${time1} seconds`;
+    document.getElementById("time1line").textContent = `Yee - it took ${time1} seconds`;
     document.getElementById("resultTablePlace").appendChild(newDivTable);
     newDivTable.appendChild(resultsTable);
     let table1Body = newDivTable.querySelector("tbody");
@@ -280,8 +280,8 @@
             body: JSON.stringify(fileInputNames)
           };
           let paragr = document.createElement("p");
-  //paragr.setAttribute("id", "answerWait");
-          paragr.textContent = "Wait for a while for answer please";
+          paragr.setAttribute("id", "answerWait");
+          paragr.textContent = "Wait for results please!";
           document.body.appendChild(paragr);
   //POST request on file load
           fetchAndHandle1stResponse(options, paragr);
@@ -302,7 +302,8 @@
   let forthResult = [];
 
   const reduceNotFoundNames = function() {
-    document.getElementById("startPage").innerHTML = "WAIT!";
+    
+    document.getElementById("startPage").innerHTML = "<span id='wait'>WAIT!</span>";
     startTime2 = Date.now();
     let shortenedNamesToCheck = [];
     let toCheckAuthors = [];
@@ -407,7 +408,7 @@
             a.textContent = 'Download CSV1';
             a.dataset.downloadurl = [contentType, a.download, a.href].join(':');
             document.body.appendChild(document.createElement("div")).setAttribute("id", "p1");
-            document.getElementById("p1").textContent = `There were ${response.results.result1.length} bot names consisting of one word which were not found among bot names in EPPO database. See links for suggestions about similar bot names`;
+            document.getElementById("p1").textContent = `There were ${response.results.result1.length} bot names consisting of one word which were not found among bot names in EPPO database. See suggestions about similar bot names`;
             let button1rez = document.createElement("button");
             button1rez.setAttribute("id", "button1r");
             button1rez.innerHTML = "Show/hide on screen results of group 1";
@@ -436,7 +437,7 @@
             a2.textContent = 'Download CSV2';
             a2.dataset.downloadurl = [contentType, a2.download, a2.href].join(':');
             document.body.appendChild(document.createElement("div")).setAttribute("id", "p2");
-            document.getElementById("p2").textContent = `There were ${response.results.result2.length} bot names consisting of two words which were not found among bot names in EPPO database. Perhaps 2nd words were authors descriptions. See links for what we suggest as similar names`;
+            document.getElementById("p2").textContent = `There were ${response.results.result2.length} bot names consisting of two words which were not found among bot names in EPPO database in first search. Perhaps 2nd word was authors description. See what the suggestions`;
             let button2rez = document.createElement("button");
             button2rez.setAttribute("id", "button2r");
             button2rez.innerHTML = "Show/hide on screen results of group 2";
@@ -460,7 +461,7 @@
             a3.textContent = 'Download CSV3';
             a3.dataset.downloadurl = [contentType, a3.download, a3.href].join(':');
             document.body.appendChild(document.createElement("div")).setAttribute("id", "p3");
-            document.getElementById("p3").textContent = `There were ${response.results.result3.length} bot names which seemed to have infraspecific taxon. See links if codes were found for them`;
+            document.getElementById("p3").textContent = `There were ${response.results.result3.length} bot names which seemed to have infraspecific taxon. See if codes were found for them`;
             let button3rez = document.createElement("button");
             button3rez.setAttribute("id", "button3r");
             button3rez.innerHTML = "Show/hide on screen results of group 3";
@@ -490,7 +491,7 @@
             a4.textContent = 'Download CSV4';
             a4.dataset.downloadurl = [contentType, a4.download, a4.href].join(':');
             document.body.appendChild(document.createElement("div")).setAttribute("id", "p4");
-            document.getElementById("p4").textContent = `There were ${response.results.result4.length} bot names consisting of more than two words and were not found among bot names in EPPO database in first search. See links for what we suggest as similar names`;
+            document.getElementById("p4").textContent = `There were ${response.results.result4.length} bot names consisting of more than two words and were not found among bot names in EPPO database in first search. See what we suggest as similar names`;
             let button4rez = document.createElement("button");
             button4rez.setAttribute("id", "button4r");
             button4rez.innerHTML = "Show/hide on screen results of group 4";

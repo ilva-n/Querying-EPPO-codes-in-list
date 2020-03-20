@@ -3,6 +3,7 @@ body {
     margin: 2em;
   }
   
+
   h1 {
     font-style: italic;
     color: #373fff;
@@ -43,6 +44,7 @@ body {
     border: 1px solid grey;
     box-shadow: 2px 2px teal;
     cursor: pointer;
+    margin-left: 3px;
   }
   
   button:hover {
@@ -62,4 +64,18 @@ body {
     padding-top: 25px;
     border-top: 1px solid lightgrey;
   }
+
+  #p1, #p2, #p3, #p4 {
+    margin-top: 45px;
+    
+  }
+  #answerWait, #wait {
+    font-size: 3em;
+    color: green;
+  
+  }
+  .bl {
+    font-weight: bold;
+  }
+  
   
