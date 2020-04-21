@@ -16,8 +16,8 @@
     "express": "^4.17.1",
     "sqlite3": "^4.1.1"
   },
-  "repository" : {     
-    "type" : "git",
-     "url" : "https://github.com/ilva-n/Querying-EPPO-codes-in-list" 
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ilva-n/Querying-EPPO-codes-in-list"
   }
 }
